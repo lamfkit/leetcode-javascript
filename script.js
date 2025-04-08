@@ -332,3 +332,17 @@ var timeLimit = function(fn, t) {
             });
         };
     };
+
+
+var timeLimit = function(fn, t) {
+    return async function(...args) {
+        return new Promise((resolve, reject) => {
+            const timeoutId = setTimeout(() => reject("Time Limit Exceeded"), t);
+
+            Promise.resolve(fn(...args)) // Ensures `fn` is treated as a promise
+                .then(resolve)
+                .catch(reject)
+                .finally(() => clearTimeout(timeoutId)); // Prevents unwanted execution
+        });
+    };
+};
