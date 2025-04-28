@@ -400,3 +400,263 @@ Array.prototype.last = function() {
   Array.prototype.last = function() {
     return this.length === 0 ? -1:this.at(-1);
 };
+
+Array.prototype.groupBy = function(fn) {
+    const group = {};
+    for (const item of this) {
+        const key = fn(item);
+        if (group[key] === undefined) { // if (!group[key])
+            group[key] = [item];
+        } else {
+            group[key].push(item);
+        }
+    }
+    return group;
+};
+
+
+Array.prototype.groupBy = function(fn) {
+    // Reduce the array into a single object
+    return this.reduce((grouped, item) => {
+      // Apply the provided callback function to get the key
+      const key = fn(item);
+      
+      // If the key doesn't exist in the grouped object, create a new array for it
+      if (!grouped[key]) {
+        grouped[key] = [];
+      }
+      
+      // Push the current item to the array associated with the key
+      grouped[key].push(item);
+      
+      // Return the updated grouped object for the next iteration
+      return grouped;
+    }, {});
+  };
+
+  let numbers = [40, 1, 5, 200];
+  numbers.sort((a, b) => a - b);
+  console.log(numbers); // [1, 5, 40, 200]
+
+  let people = [
+    { name: "John", age: 23 },
+    { name: "Amy", age: 17 },
+    { name: "Zack", age: 30 },
+  ];
+  people.sort((a, b) => b.age - a.age);
+  console.log(people);
+
+  var sortBy = function(arr, fn) {
+    return arr.sort((a,b) => fn(a) - fn(b))
+};
+
+// Join Two Arrays by ID
+var join = function(arr1, arr2) {
+    const combinedArray = arr1.concat(arr2);
+    const merged = {};
+  
+    combinedArray.forEach((obj) => {
+      const id = obj.id;
+      if (!merged[id]) {
+        merged[id] = { ...obj };
+      } else {
+        merged[id] = { ...merged[id], ...obj };
+      }
+    });
+  
+    return Object.values(merged)
+  };
+
+  var join = function(arr1, arr2) {
+    const map = new Map();
+    for(const obj of arr1) map.set(obj.id, obj);
+    for(const obj of arr2) {
+        if(!map.has(obj.id)) map.set(obj.id, obj);
+        else {
+            const prevObj = map.get(obj.id);
+            for(const key of Object.keys(obj)) prevObj[key] = obj[key];
+        }
+    }
+    const res = new Array();
+    for(let key of map.keys()) res.push(map.get(key));
+    return res.sort((a,b)=>a.id-b.id); 
+
+};
+
+var join = function(arr1, arr2) {
+    arr1.sort((a,b) => a.id - b.id)
+    arr2.sort((a,b) => a.id - b.id)
+    let i = 0
+    let j = 0
+
+    const joinedArray = []
+
+    while(i < arr1.length && j < arr2.length) {
+
+        if(arr1[i].id === arr2[j].id) {
+            joinedArray.push({...arr1[i], ...arr2[j]})
+            i++
+            j++
+            continue
+        }
+
+        if(arr1[i].id < arr2[j].id) {
+            joinedArray.push({...arr1[i]})
+            i++
+            continue
+        }
+
+        joinedArray.push({...arr2[j]})
+        j++
+    }
+
+    while(i < arr1.length) {
+        joinedArray.push({...arr1[i]})
+        i++
+    }
+
+    while(j < arr2.length) {
+        joinedArray.push({...arr2[j]})
+        j++
+    }
+
+    return joinedArray
+}
+
+/// --------------- 2625. Flatten Deeply Nested Array
+var flat = function (arr, n) {
+    const res = [];
+    for (const item of arr) {
+        if (Array.isArray(item) && n > 0) {
+            res.push(...flat(item, n - 1));
+        } else {
+            res.push(item);
+        }
+    }
+    return res;
+};
+
+// 2705. Compact Object
+var compactObject = function(obj) {
+    if (Array.isArray(obj)) {
+        const result = [];
+        for (const item of obj) {
+            const val = compactObject(item);
+            if (val) {
+                result.push(val);
+            }
+        }
+        return result;
+    } else if (typeof obj === 'object' && obj !== null) {
+        const result = {};
+        for (const key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                const val = compactObject(obj[key]);
+                if (val) {
+                    result[key] = val;
+                }
+            }
+        }
+        return result;
+    } else {
+        return obj || undefined;
+    }
+};
+
+
+var ArrayWrapper = function(nums) {
+    this.nums = nums;
+  };
+  
+  /**
+   * @return {number}
+   */
+  ArrayWrapper.prototype.valueOf = function() {
+      return this.nums.reduce((sum, num) => sum + num, 0);
+    //
+      let sum = 0;
+      for (let i = 0; i < this.nums.length; i++) {
+        sum += this.nums[i];
+      }
+      return sum;
+  
+  }
+  
+  /**
+   * @return {string}
+   */
+  ArrayWrapper.prototype.toString = function() {
+      return JSON.stringify(this.nums);
+  }
+
+
+// class object calculator
+// https://leetcode.com/problems/calculator-with-method-chaining/?envType=study-plan-v2&envId=30-days-of-javascript
+class Calculator {
+    
+    /** 
+     * @param {number} value
+     */
+    constructor(value) {
+        this.value = value;
+    }
+    
+    /** 
+     * @param {number} value
+     * @return {Calculator}
+     */
+    add(value){
+        this.value += value;
+        return this;
+    }
+    
+    /** 
+     * @param {number} value
+     * @return {Calculator}
+     */
+    subtract(value){
+        this.value -= value;
+        return this;
+    }
+    
+    /** 
+     * @param {number} value
+     * @return {Calculator}
+     */  
+    multiply(value) {
+        this.value *= value;
+        return this;
+    }
+    
+    /** 
+     * @param {number} value
+     * @return {Calculator}
+     */
+    divide(value) {
+        if(value === 0) {
+        throw 'Division by zero is not allowed';
+    }
+        this.value /= value;
+        return this;
+    }
+    
+    /** 
+     * @param {number} value
+     * @return {Calculator}
+     */
+    power(value) {
+        this.value **= value;
+        return this;
+    }
+    
+    /** 
+     * @return {number}
+     */
+    getResult() {
+        return this.value;
+    }
+}
+
+
+// https://leetcode.com/problems/event-emitter/description/?envType=study-plan-v2&envId=30-days-of-javascript
+// 2694. Event Emitter
