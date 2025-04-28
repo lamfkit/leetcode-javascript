@@ -660,3 +660,39 @@ class Calculator {
 
 // https://leetcode.com/problems/event-emitter/description/?envType=study-plan-v2&envId=30-days-of-javascript
 // 2694. Event Emitter
+class EventEmitter {
+    eventMap = {}; 
+    /**
+     * @param {string} eventName
+     * @param {Function} callback
+     * @return {Object}
+     */
+    subscribe(eventName, callback) {
+        if (!this.eventMap[eventName]) {
+            this.eventMap[eventName] = new Set();
+            // this.events.set(eventName, []);
+        }
+        this.eventMap[eventName].add(callback);
+
+        return {
+            unsubscribe: () => {
+                this.eventMap[eventName].delete(callback);
+            }
+        };
+    }
+    
+    /**
+     * @param {string} eventName
+     * @param {Array} args
+     * @return {Array}
+     */
+    emit(eventName, args = []) {
+        const res = [];
+        if (this.eventMap[eventName]) {
+            this.eventMap[eventName].forEach((callback)=>{
+                res.push(callback(...args));
+            })
+        }
+        return res;
+    }
+}
